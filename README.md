@@ -23,7 +23,7 @@ An Automatic1111 Stable Diffusion WebUI extension that tracks all image generati
 2. Clone or copy this extension:
 
    ```
-   git clone <repository-url> ajt-sd-webui
+   git clone https://github.com/FEUAZUR/API-Job-Tracker-SD-WebUI/
    ```
 
 3. Restart A1111
@@ -48,10 +48,10 @@ python launch.py --api --api-auth username:password
 
 You can configure the Job Tracker via environment variables (useful for headless/API-only mode):
 
-| Variable            | Values                        | Description                    |
-| ------------------- | ----------------------------- | ------------------------------ |
-| `TRACKER_ENABLED`   | `1`, `true`, `yes`, `on`      | Enable job tracking on startup |
-| `TRACKER_RETENTION` | Any number (e.g., 7, 30, 365) | Set retention period in days   |
+| Variable            | Values                                         | Description                    |
+| ------------------- | ---------------------------------------------- | ------------------------------ |
+| `TRACKER_ENABLED`   | `1`, `true`, `yes`, `on`                       | Enable job tracking on startup |
+| `TRACKER_RETENTION` | Any number (e.g., 7, 30, 365, 0 for unlimited) | Set retention period in days   |
 
 **Examples:**
 
@@ -59,15 +59,13 @@ You can configure the Job Tracker via environment variables (useful for headless
 # Linux/Mac - webui-user.sh
 export TRACKER_ENABLED=1
 export TRACKER_RETENTION=30
-export COMMANDLINE_ARGS="--port 3000 --api --nowebui --listen"
 
 # Windows - webui-user.bat
 set TRACKER_ENABLED=1
 set TRACKER_RETENTION=30
-set COMMANDLINE_ARGS=--port 3000 --api --nowebui --listen
 
 # Docker/RunPod
-TRACKER_ENABLED=1 TRACKER_RETENTION=30 python launch.py --api --nowebui
+TRACKER_ENABLED=1 TRACKER_RETENTION=30 python launch.py...
 ```
 
 **Priority:** Environment variables override `config.json` settings.
@@ -132,7 +130,7 @@ If your connection is interrupted during generation:
 
 - `config.json`: Extension settings
 - `jobs.json`: Job metadata storage
-- `images/`: Tracked images storage
+- `output`: Tracked images storage (Native folder)
 
 ## API Endpoints
 
@@ -174,7 +172,3 @@ X-Job-ID: A3f9K2xY
 - Automatic1111 Stable Diffusion WebUI
 - Python 3.8+
 - No external dependencies (uses Python standard library)
-
-## License
-
-MIT License
