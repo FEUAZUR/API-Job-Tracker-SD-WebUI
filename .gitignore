@@ -1,0 +1,32 @@
+# Configuration files (contain sensitive data)
+config.json
+
+# Job data (runtime generated)
+jobs.json
+jobs.json.bak
+jobs.json.tmp
+
+# Tracked images (runtime generated)
+images/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
