@@ -96,9 +96,15 @@ Response:
   "prompt": "beautiful landscape...",
   "status": "Completed",
   "timestamp": 1736712000,
-  "image": "base64_encoded_png..."
+  "images": [
+    "base64_encoded_png_1...",
+    "base64_encoded_png_2...",
+    "base64_encoded_png_3..."
+  ]
 }
 ```
+
+**Note:** The `images` array contains all images generated in a single batch (e.g., if `batch_size=4`, you'll get 4 images).
 
 **List jobs:**
 

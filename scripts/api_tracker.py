@@ -94,17 +94,20 @@ def add_job(job_id, prompt, ip):
         "ip": ip,
         "timestamp": int(time.time()),
         "status": "Pending",
-        "output_path": None
+        "output_paths": []
     })
     save_jobs(jobs)
 
-def update_job_status(job_id, status, output_path=None):
+def update_job_status(job_id, status, output_paths=None):
     jobs = load_jobs()
     for job in jobs:
         if job.get("id") == job_id:
             job["status"] = status
-            if output_path:
-                job["output_path"] = output_path
+            if output_paths:
+                if isinstance(output_paths, list):
+                    job["output_paths"] = output_paths
+                else:
+                    job["output_paths"] = [output_paths]
             break
     save_jobs(jobs)
 
@@ -130,8 +133,12 @@ def cleanup_old_jobs(retention_days):
         if job.get("timestamp", 0) >= cutoff_time:
             jobs_to_keep.append(job)
         else:
-            output_path = job.get("output_path")
-            if output_path:
+            output_paths = job.get("output_paths", [])
+            if not output_paths:
+                output_path = job.get("output_path")
+                if output_path:
+                    output_paths = [output_path]
+            for output_path in output_paths:
                 try:
                     path = Path(output_path)
                     if path.exists():
@@ -222,7 +229,7 @@ def setup_api_middleware(app: FastAPI):
                     response_body += chunk
                 
                 if active_job["images"]:
-                    update_job_status(job_id, "Completed", active_job["images"][0])
+                    update_job_status(job_id, "Completed", active_job["images"])
                 else:
                     update_job_status(job_id, "Completed")
                 
@@ -266,17 +273,23 @@ def setup_api_middleware(app: FastAPI):
             "prompt": job.get("prompt"),
             "status": job.get("status"),
             "timestamp": job.get("timestamp"),
-            "image": None
+            "images": []
         }
         
-        if job.get("status") == "Completed" and job.get("output_path"):
-            try:
-                image_path = Path(job["output_path"])
-                if image_path.exists():
-                    with open(image_path, "rb") as f:
-                        result["image"] = base64.b64encode(f.read()).decode("utf-8")
-            except:
-                pass
+        if job.get("status") == "Completed":
+            output_paths = job.get("output_paths", [])
+            if not output_paths:
+                output_path = job.get("output_path")
+                if output_path:
+                    output_paths = [output_path]
+            for image_path in output_paths:
+                try:
+                    path = Path(image_path)
+                    if path.exists():
+                        with open(path, "rb") as f:
+                            result["images"].append(base64.b64encode(f.read()).decode("utf-8"))
+                except:
+                    pass
         
         return JSONResponse(content=result)
     
